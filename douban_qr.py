@@ -23,9 +23,33 @@ import uuid
 import re
 
 folder = "/Users/James/Documents/project/qr/img/douban/"
+bakfolder = "/Users/James/Documents/project/qr/img/bak/"
 url1 = "https://www.douban.com/group/search?"
 url2 = "&cat=1013&q=%E7%BE%A4&sort=time"
 qrs = []
+
+
+def initqrs(path,days):
+    files = os.listdir(path)
+    for i in files:
+        filename = path + i
+        if os.path.getmtime(filename) < time.time() - 3600 * 24 * days:
+            try:
+                if os.path.isfile(filename):
+                    os.remove(filename)
+                    files.remove(i)
+                print("%s remove success." % filename)
+            except Exception as error:
+                print(error)
+                print("%s remove faild." % filename)
+        else:
+            qr = qrtools.QR()
+            qr.decode(filename)
+            qrs.append(qr.data)
+
+
+initqrs(bakfolder,1)
+
 
 #headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'}
 ua=UserAgent()

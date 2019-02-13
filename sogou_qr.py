@@ -29,6 +29,29 @@ from io import BytesIO
 requests.adapters.DEFAULT_RETRIES = 5 # 增加重连次数
 import async_timeout
 
+bakfolder = "/Users/James/Documents/project/qr/img/bak/"
+
+qrs = []
+def initqrs(path,days):
+    files = os.listdir(path)
+    for i in files:
+        filename = path + i
+        if os.path.getmtime(filename) < time.time() - 3600 * 24 * days:
+            try:
+                if os.path.isfile(filename):
+                    os.remove(filename)
+                    files.remove(i)
+                print("%s remove success." % filename)
+            except Exception as error:
+                print(error)
+                print("%s remove faild." % filename)
+        else:
+            qr = decode(Image.open(filename))
+            qrs.append(qr[0].data.decode("utf-8"))
+            #print(qr[0].data.decode("utf-8"))
+
+
+initqrs(bakfolder,7)
 
 
 def phantomjs_getsnuid():
@@ -46,7 +69,7 @@ def phantomjs_getsnuid():
 
 imgurls = []
 imgurls_qr = []
-qrs = []
+
 
 
 ua=UserAgent()

@@ -2,10 +2,12 @@ import os
 import sys
 import random,time
 import subprocess
+import shutil 
 
-def push_file(file_dir,folder):
+def push_file(file_dir,folder,bak_path):
     for file in os.listdir(file_dir):
         file_path = os.path.join(file_dir, file)
+        bakfile_path = os.path.join(bak_path, file)
         if os.path.splitext(file_path)[1] == '.jpg':
             print file
             returnCode1 = subprocess.call('/Users/James/Documents/android/platform-tools/adb push '+file_path+' /sdcard/DCIM/Camera/'+folder+'/'+file, shell=True)
@@ -13,7 +15,8 @@ def push_file(file_dir,folder):
             returnCode2 = subprocess.call('/Users/James/Documents/android/platform-tools/adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/DCIM/Camera/'+folder+'/'+file, shell=True)
             #print(returnCode2)
             if returnCode1 == 0 and returnCode2 == 0:
-                os.remove(file_path)
+                #os.remove(file_path)
+                shutil.move(file_path,bakfile_path)  
 print sys.argv[1]
 print sys.argv[2]
 
@@ -26,7 +29,7 @@ print returnCode
 time.sleep(1)
 if returnCode == 0:
     time.sleep(1)
-    returnCode = push_file(sys.argv[2],sys.argv[3])
+    returnCode = push_file(sys.argv[2],sys.argv[3],sys.argv[4])
     time.sleep(1)
 returnCode = subprocess.call('/Users/James/Documents/android/platform-tools/adb disconnect', shell=True)
 print returnCode
